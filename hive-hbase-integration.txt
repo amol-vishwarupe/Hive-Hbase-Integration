@@ -1,0 +1,71 @@
+
+Create hbase table 
+
+create 'employee','personaldetails','deptdetails'
+
+put 'employee','eid01','personaldetails:fname','Brundesh'
+
+put 'employee','eid01','personaldetails:Lname','R'
+
+put 'employee','eid01','personaldetails:salary','10000'
+
+put 'employee','eid01','deptdetails:name','R&D'
+
+put 'employee','eid01','deptdetails:location','Banglore'
+
+put 'employee','eid02','personaldetails:fname','Abhay'
+
+put 'employee','eid02','personaldetails:Lname','Kumar'
+
+put 'employee','eid02','personaldetails:salary','100000'
+
+
+
+
+create external table employee_hbase(Eid String, f_name string, s_name string, salary int)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+ with serdeproperties ("hbase.columns.mapping"=":key,personaldetails:fname,personaldetails:Lname,personaldetails:salary")
+ tblproperties("hbase.table.name"="employee");
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+
+Ambari Hive output
+
+REATE EXTERNAL TABLE `employee_hbase`(
+  `eid` string COMMENT 'from deserializer', 
+  `f_name` string COMMENT 'from deserializer', 
+  `s_name` string COMMENT 'from deserializer', 
+  `salary` int COMMENT 'from deserializer')
+ROW FORMAT SERDE 
+  'org.apache.hadoop.hive.hbase.HBaseSerDe' 
+STORED BY 
+  'org.apache.hadoop.hive.hbase.HBaseStorageHandler' 
+WITH SERDEPROPERTIES ( 
+  'hbase.columns.mapping'=':key,personaldetails:fname,personaldetails:Lname,personaldetails:salary', 
+  'serialization.format'='1')
+TBLPROPERTIES (
+  'hbase.table.name'='employee', 
+  'last_modified_by'='root', 
+  'last_modified_time'='1557804956', 
+  'numFiles'='0', 
+  'numRows'='0', 
+  'rawDataSize'='0', 
+  'totalSize'='0', 
+  'transient_lastDdlTime'='1557804956')
+
+
+
+
+select *from employee_hbase;
+
+//insert new record 
+
+insert into employee_hbase (eid , f_name ,s_name ,salary) values ('eid_03' ,'Amol' ,'vishwarupe' ,'12000');
+
+select * from employee_hbase;
+
+//for Hbase 
+
+scan 'employee'
+
+
+
